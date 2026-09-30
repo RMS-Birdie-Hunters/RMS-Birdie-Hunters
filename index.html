@@ -231,8 +231,8 @@ footer{margin-top:40px;color:var(--muted);font-size:14px}
 
   <section>
     <h2>Latest birdies</h2>
+    <p class="more" id="moreWrap" hidden style="margin:0 0 12px"><button class="btn ghost small" id="moreBtn" type="button">Show older birdies</button></p>
     <ul class="feed" id="feed"></ul>
-    <p class="more" id="moreWrap" hidden><button class="btn ghost small" id="moreBtn" type="button">Show older birdies</button></p>
   </section>
 
   <footer>Honour system. Log it on the day and name your playing partner if you can.</footer>
@@ -307,7 +307,7 @@ footer{margin-top:40px;color:var(--muted);font-size:14px}
   const $ = id => document.getElementById(id);
   const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const COURSES = { JHT: "J.H. Taylor", PB: "Pam Barton" };
-  const PAR3 = { JHT: [1,5,8,11,16], PB: [3,6,10,16] };
+  const PAR3 = { JHT: [1,5,8,11,16], PB: [3,6,10,15] };
   const PAR3_KEYS = [...PAR3.JHT.map(n => "JHT-" + n), ...PAR3.PB.map(n => "PB-" + n)];
   const EAGLE_TARGET = 4; // eagles needed to win "The Eagle has landed"
   const BIG4_KEYS = ["JHT-12", "JHT-15", "PB-7", "PB-18"];
@@ -436,7 +436,7 @@ footer{margin-top:40px;color:var(--muted);font-size:14px}
             return `<i class="${on ? "on" : ""}${ace ? " ace" : ""}">${c} ${n}</i>`; }).join("")}</span></li>`).join("")}</ol>`
         : `<p class="qsub" style="margin:0">${emptyMsg}</p>`}`;
     };
-    holeQuest("questPar3", "2's", "A two on every par 3: JHT 1, 5, 8, 11 and 16. PB 3, 6, 10 and 16. A hole-in-one counts too.", PAR3_KEYS, "Nobody has a two on a par 3 yet.");
+    holeQuest("questPar3", "2's", "A two on every par 3: JHT 1, 5, 8, 11 and 16. PB 3, 6, 10 and 15. A hole-in-one counts too.", PAR3_KEYS, "Nobody has a two on a par 3 yet.");
     holeQuest("questBig4", "The Big 4", "Birdie JHT 12 and 15, and PB 7 and 18. An eagle counts too.", BIG4_KEYS, "Nobody has birdied one of the Big 4 yet.");
 
     // scorecards
@@ -456,8 +456,8 @@ footer{margin-top:40px;color:var(--muted);font-size:14px}
     }).join("");
 
     // feed
-    const feed = S.birdies.slice().sort((a,b) => (b.date||"").localeCompare(a.date||"") || (b.loggedAt||0) - (a.loggedAt||0));
-    $("feed").innerHTML = feed.length ? feed.slice(0, S.feedLimit).map(b => {
+    const feed = S.birdies.slice().sort((a,b) => (a.date||"").localeCompare(b.date||"") || (a.loggedAt||0) - (b.loggedAt||0)); // oldest first
+    $("feed").innerHTML = feed.length ? feed.slice(-S.feedLimit).map(b => { // the most recent ones, still oldest first
       const s = stats(b.playerId);
       const isFirst = s.first[b.course + "-" + b.hole] === b;
       const canDel = mine.has(b.id);
